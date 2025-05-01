@@ -287,59 +287,128 @@ export default function PFQForm() {
                 </motion.div>
             )}
 
-            {result && (
+{/* // Replace the results section with this code: */}
+
+{result && (
+    <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        style={{
+            margin: '2rem auto',
+            padding: '1.5rem',
+            backgroundColor: '#f8f9fa',
+            borderRadius: '10px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            maxWidth: '900px'
+        }}
+    >
+        <motion.div 
+            initial={{ scale: 0.95 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            style={{ width: '100%' }}
+        >
+            <h2 style={{
+                fontSize: '1.8rem',
+                color: '#2c3e50',
+                marginBottom: '1.5rem',
+                textAlign: 'center',
+                fontWeight: '600'
+            }}>Recommended Quantities</h2>
+            
+            <div style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '20px',
+                justifyContent: 'center',
+                marginBottom: '2rem'
+            }}>
                 <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className={styles.results}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                    style={{
+                        flex: '1 0 300px',
+                        padding: '1.5rem',
+                        backgroundColor: '#ffffff',
+                        borderRadius: '8px',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                        textAlign: 'center'
+                    }}
                 >
-                    <motion.div 
-                        className={styles.resultSection}
-                        initial={{ scale: 0.95 }}
-                        animate={{ scale: 1 }}
-                        transition={{ duration: 0.3, delay: 0.1 }}
-                    >
-                        <h2 className={styles.resultsTitle}>Recommended Quantities</h2>
-                        <div className={styles.prediction}>
-                            <motion.div 
-                                className={styles.predictionItem}
-                                whileHover={{ scale: 1.05 }}
-                                transition={{ duration: 0.2 }}
-                            >
-                                <h3>Fertilizer Required</h3>
-                                <p className={styles.highlight}>{Math.max(0, result.predicted_fertilizer_usage_tons).toFixed(4)} tons</p>
-                                <p className={styles.note}>Apply in multiple small doses throughout the growing season</p>
-                            </motion.div>
-                            
-                            <motion.div 
-                                className={styles.predictionItem}
-                                whileHover={{ scale: 1.05 }}
-                                transition={{ duration: 0.2 }}
-                            >
-                                <h3>Pesticide Required</h3>
-                                <p className={styles.highlight}>{result.predicted_pesticide_usage_kg.toFixed(4)} kg</p>
-                                <p className={styles.note}>Use appropriate safety measures when applying pesticides</p>
-                            </motion.div>
-                        </div>
-                        
-                        <motion.div 
-                            className={styles.recommendations}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.5, delay: 0.3 }}
-                        >
-                            <h3>Best Practices</h3>
-                            <ul>
-                                <li>Apply fertilizer at cooler times of day to reduce nutrient loss</li>
-                                <li>Consider split applications for more efficient nutrient uptake</li>
-                                <li>Use targeted pesticide application to minimize environmental impact</li>
-                                <li>Adjust based on soil test results and plant health monitoring</li>
-                            </ul>
-                        </motion.div>
-                    </motion.div>
+                    <h3 style={{ color: '#3498db', marginBottom: '1rem' }}>Fertilizer Required</h3>
+                    <p style={{
+                        fontSize: '2rem',
+                        fontWeight: '700',
+                        color: '#2ecc71',
+                        margin: '0.5rem 0'
+                    }}>{Math.max(0, result.predicted_fertilizer_usage_tons).toFixed(4)} tons</p>
+                    <p style={{
+                        fontSize: '0.9rem',
+                        color: '#7f8c8d',
+                        marginTop: '0.75rem'
+                    }}>Apply in multiple small doses throughout the growing season</p>
                 </motion.div>
-            )}
+                
+                <motion.div 
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                    style={{
+                        flex: '1 0 300px',
+                        padding: '1.5rem',
+                        backgroundColor: '#ffffff',
+                        borderRadius: '8px',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                        textAlign: 'center'
+                    }}
+                >
+                    <h3 style={{ color: '#e74c3c', marginBottom: '1rem' }}>Pesticide Required</h3>
+                    <p style={{
+                        fontSize: '2rem',
+                        fontWeight: '700',
+                        color: '#e67e22',
+                        margin: '0.5rem 0'
+                    }}>{result.predicted_pesticide_usage_kg.toFixed(4)} kg</p>
+                    <p style={{
+                        fontSize: '0.9rem',
+                        color: '#7f8c8d',
+                        marginTop: '0.75rem'
+                    }}>Use appropriate safety measures when applying pesticides</p>
+                </motion.div>
+            </div>
+            
+            <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                style={{
+                    backgroundColor: '#ffffff',
+                    padding: '1.5rem',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                    marginTop: '1.5rem'
+                }}
+            >
+                <h3 style={{ 
+                    color: '#2c3e50', 
+                    marginBottom: '1rem',
+                    borderBottom: '2px solid #f0f0f0',
+                    paddingBottom: '0.5rem'
+                }}>Best Practices</h3>
+                <ul style={{ 
+                    paddingLeft: '1.25rem',
+                    color: '#555',
+                    lineHeight: '1.6'
+                }}>
+                    <li>Apply fertilizer at cooler times of day to reduce nutrient loss</li>
+                    <li>Consider split applications for more efficient nutrient uptake</li>
+                    <li>Use targeted pesticide application to minimize environmental impact</li>
+                    <li>Adjust based on soil test results and plant health monitoring</li>
+                </ul>
+            </motion.div>
+        </motion.div>
+    </motion.div>
+)}
         </motion.div>
     );
 }

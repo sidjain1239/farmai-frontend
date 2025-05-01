@@ -243,70 +243,150 @@ const IrrigationWater = () => {
                 </motion.div>
             )}
 
-            {(irrigationResult || waterResult) && !error && (
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className={styles.results}
-                >
+{(irrigationResult || waterResult) && !error && (
+    <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className={styles.results}
+        style={{
+            margin: '2rem auto',
+            padding: '1.5rem',
+            backgroundColor: '#f8f9fa',
+            borderRadius: '10px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            maxWidth: '900px'
+        }}
+    >
+        <motion.div 
+            className={styles.resultSection}
+            initial={{ scale: 0.95 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            style={{ width: '100%' }}
+        >
+            <h2 className={styles.resultsTitle} style={{
+                fontSize: '1.8rem',
+                color: '#2c3e50',
+                marginBottom: '1.5rem',
+                textAlign: 'center',
+                fontWeight: '600'
+            }}>Water Resource Analysis</h2>
+            
+            <div style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '20px',
+                justifyContent: 'center',
+                marginBottom: '2rem'
+            }}>
+                {irrigationResult && (
                     <motion.div 
-                        className={styles.resultSection}
-                        initial={{ scale: 0.95 }}
-                        animate={{ scale: 1 }}
-                        transition={{ duration: 0.3, delay: 0.1 }}
+                        className={styles.predictionItem}
+                        whileHover={{ scale: 1.03 }}
+                        transition={{ duration: 0.2 }}
+                        style={{
+                            flex: '1 0 300px',
+                            padding: '1.5rem',
+                            backgroundColor: '#ffffff',
+                            borderRadius: '8px',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                            textAlign: 'center'
+                        }}
                     >
-                        <h2 className={styles.resultsTitle}>Water Resource Analysis</h2>
-                        
-                        {irrigationResult && (
-                            <motion.div 
-                                className={styles.predictionItem}
-                                whileHover={{ scale: 1.02 }}
-                                transition={{ duration: 0.2 }}
-                            >
-                                <h3>Recommended Irrigation Type</h3>
-                                <p className={styles.highlight}>
-                                    {irrigationResult.predicted_irrigation_type.toUpperCase()}
-                                </p>
-                                <p>Confidence: {irrigationResult.confidence.toFixed(2)}%</p>
-                            </motion.div>
-                        )}
-                        
-                        {waterResult && (
-                            <motion.div 
-                                className={styles.predictionItem}
-                                whileHover={{ scale: 1.02 }}
-                                transition={{ duration: 0.2 }}
-                            >
-                                <h3>Estimated Water Requirement</h3>
-                                <p className={styles.highlight}>
-                                    {waterResult.predicted_water_usage.toFixed(2)} liters
-                                </p>
-                                <p>For {waterResult.area_hectares} hectares of land</p>
-                                <p className={styles.efficiency}>
-                                    {(waterResult.predicted_water_usage / waterResult.area_hectares / 1000).toFixed(2)} m³ per hectare
-                                </p>
-                            </motion.div>
-                        )}
-                        
-                        <motion.div 
-                            className={styles.recommendations}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.5, delay: 0.3 }}
-                        >
-                            <h3>Water Conservation Tips</h3>
-                            <ul>
-                                <li>Water early in the morning or evening to reduce evaporation</li>
-                                <li>Use mulch around plants to retain soil moisture</li>
-                                <li>Consider installing soil moisture sensors for precision irrigation</li>
-                                <li>Maintain irrigation equipment to prevent leaks and inefficiencies</li>
-                                <li>Collect rainwater when possible to supplement irrigation needs</li>
-                            </ul>
-                        </motion.div>
+                        <h3 style={{ color: '#3498db', marginBottom: '1rem' }}>Recommended Irrigation Type</h3>
+                        <p className={styles.highlight} style={{
+                            fontSize: '2rem',
+                            fontWeight: '700',
+                            color: '#3498db',
+                            margin: '0.5rem 0'
+                        }}>
+                            {irrigationResult.predicted_irrigation_type.toUpperCase()}
+                        </p>
+                        <p style={{ 
+                            color: '#7f8c8d',
+                            fontSize: '0.95rem',
+                            marginTop: '0.75rem'
+                        }}>
+                            Confidence: <strong>{irrigationResult.confidence.toFixed(2)}%</strong>
+                        </p>
                     </motion.div>
-                </motion.div>
-            )}
+                )}
+                
+                {waterResult && (
+                    <motion.div 
+                        className={styles.predictionItem}
+                        whileHover={{ scale: 1.03 }}
+                        transition={{ duration: 0.2 }}
+                        style={{
+                            flex: '1 0 300px',
+                            padding: '1.5rem',
+                            backgroundColor: '#ffffff',
+                            borderRadius: '8px',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                            textAlign: 'center'
+                        }}
+                    >
+                        <h3 style={{ color: '#2980b9', marginBottom: '1rem' }}>Estimated Water Requirement</h3>
+                        <p className={styles.highlight} style={{
+                            fontSize: '2rem',
+                            fontWeight: '700',
+                            color: '#2ecc71',
+                            margin: '0.5rem 0'
+                        }}>
+                            {waterResult.predicted_water_usage.toFixed(2)} liters
+                        </p>
+                        <p style={{ marginBottom: '0.5rem', color: '#555' }}>
+                            For {waterResult.area_hectares} hectares of land
+                        </p>
+                        <p style={{
+                            fontWeight: '600',
+                            color: '#16a085',
+                            backgroundColor: '#e8f8f5',
+                            padding: '0.5rem',
+                            borderRadius: '4px',
+                            display: 'inline-block'
+                        }}>
+                            {(waterResult.predicted_water_usage / waterResult.area_hectares / 1000).toFixed(2)} m³ per hectare
+                        </p>
+                    </motion.div>
+                )}
+            </div>
+            
+            <motion.div 
+                className={styles.recommendations}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                style={{
+                    backgroundColor: '#ffffff',
+                    padding: '1.5rem',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                    marginTop: '1.5rem'
+                }}
+            >
+                <h3 style={{ 
+                    color: '#2c3e50', 
+                    marginBottom: '1rem',
+                    borderBottom: '2px solid #f0f0f0',
+                    paddingBottom: '0.5rem'
+                }}>Water Conservation Tips</h3>
+                <ul style={{ 
+                    paddingLeft: '1.25rem',
+                    color: '#555',
+                    lineHeight: '1.6'
+                }}>
+                    <li>Water early in the morning or evening to reduce evaporation</li>
+                    <li>Use mulch around plants to retain soil moisture</li>
+                    <li>Consider installing soil moisture sensors for precision irrigation</li>
+                    <li>Maintain irrigation equipment to prevent leaks and inefficiencies</li>
+                    <li>Collect rainwater when possible to supplement irrigation needs</li>
+                </ul>
+            </motion.div>
+        </motion.div>
+    </motion.div>
+)}
         </motion.div>
     );
 }

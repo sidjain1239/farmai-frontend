@@ -215,58 +215,113 @@ export default function CropYieldForm() {
                 </motion.div>
             )}
 
-            {result && !error && (
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className={styles.results}
-                >
-                    <motion.div 
-                        className={styles.resultSection}
-                        initial={{ scale: 0.95 }}
-                        animate={{ scale: 1 }}
-                        transition={{ duration: 0.3, delay: 0.1 }}
-                    >
-                        <h2 className={styles.resultsTitle}>Yield Forecast</h2>
-                        
-                        <motion.div 
-                            className={styles.predictionItem}
-                            whileHover={{ scale: 1.02 }}
-                            transition={{ duration: 0.2 }}
-                        >
-                            <h3>Estimated Crop Yield</h3>
-                            <p className={styles.highlight}>
-                                {result.predicted_crop_yield 
-                                    ? `${Number(result.predicted_crop_yield).toFixed(2)} tons/hectare`
-                                    : 'Calculation error'}
-                            </p>
-                            <p className={styles.totalYield}>
-                                Total expected yield: <span>{result.predicted_crop_yield 
-                                    ? <strong>{(Number(result.predicted_crop_yield) * Number(result.area)).toFixed(2)} tons</strong>
-                                    : 'Calculation error'}</span>
-                            </p>
-                            <p className={styles.note}>Based on {result.area} hectares of farmland</p>
-                        </motion.div>
-                        
-                        <motion.div 
-                            className={styles.recommendations}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.5, delay: 0.3 }}
-                        >
-                            <h3>Yield Optimization Tips</h3>
-                            <ul>
-                                <li>Monitor and maintain optimal soil moisture throughout the growing season</li>
-                                <li>Ensure balanced nutrition through soil testing and targeted fertilization</li>
-                                <li>Implement pest and disease monitoring to catch issues early</li>
-                                <li>Consider crop rotation to improve soil health and reduce pest pressure</li>
-                                <li>Time planting and harvesting based on weather forecasts for optimal conditions</li>
-                            </ul>
-                        </motion.div>
-                    </motion.div>
-                </motion.div>
-            )}
+{/* // Replace the results section with this code: */}
+
+{result && !error && (
+    <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className={styles.results}
+        style={{
+            margin: '2rem auto',
+            padding: '1.5rem',
+            backgroundColor: '#f8f9fa',
+            borderRadius: '10px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            maxWidth: '900px'
+        }}
+    >
+        <motion.div 
+            className={styles.resultSection}
+            initial={{ scale: 0.95 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            style={{ width: '100%' }}
+        >
+            <h2 className={styles.resultsTitle} style={{
+                fontSize: '1.8rem',
+                color: '#2c3e50',
+                marginBottom: '1.5rem',
+                textAlign: 'center',
+                fontWeight: '600'
+            }}>Yield Forecast</h2>
+            
+            <motion.div 
+                className={styles.predictionItem}
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+                style={{
+                    padding: '1.5rem',
+                    backgroundColor: '#ffffff',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                    textAlign: 'center',
+                    marginBottom: '1.5rem'
+                }}
+            >
+                <h3 style={{ color: '#3498db', marginBottom: '1rem' }}>Estimated Crop Yield</h3>
+                <p className={styles.highlight} style={{
+                    fontSize: '2rem',
+                    fontWeight: '700',
+                    color: '#2ecc71',
+                    margin: '0.5rem 0'
+                }}>
+                    {result.predicted_crop_yield 
+                        ? `${Number(result.predicted_crop_yield).toFixed(2)} tons/hectare`
+                        : 'Calculation error'}
+                </p>
+                <p className={styles.totalYield} style={{
+                    fontSize: '1.2rem',
+                    margin: '1rem 0',
+                    color: '#2c3e50'
+                }}>
+                    Total expected yield: <span style={{ color: '#e67e22', fontWeight: '600' }}>
+                        {result.predicted_crop_yield 
+                            ? `${(Number(result.predicted_crop_yield) * Number(result.area)).toFixed(2)} tons`
+                            : 'Calculation error'}
+                    </span>
+                </p>
+                <p className={styles.note} style={{
+                    fontSize: '0.9rem',
+                    color: '#7f8c8d',
+                    marginTop: '0.5rem'
+                }}>Based on {result.area} hectares of farmland</p>
+            </motion.div>
+            
+            <motion.div 
+                className={styles.recommendations}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                style={{
+                    backgroundColor: '#ffffff',
+                    padding: '1.5rem',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
+                }}
+            >
+                <h3 style={{ 
+                    color: '#2c3e50', 
+                    marginBottom: '1rem',
+                    borderBottom: '2px solid #f0f0f0',
+                    paddingBottom: '0.5rem'
+                }}>Yield Optimization Tips</h3>
+                <ul style={{ 
+                    paddingLeft: '1.25rem',
+                    color: '#555',
+                    lineHeight: '1.6'
+                }}>
+                    <li>Monitor and maintain optimal soil moisture throughout the growing season</li>
+                    <li>Ensure balanced nutrition through soil testing and targeted fertilization</li>
+                    <li>Implement pest and disease monitoring to catch issues early</li>
+                    <li>Consider crop rotation to improve soil health and reduce pest pressure</li>
+                    <li>Time planting and harvesting based on weather forecasts for optimal conditions</li>
+                </ul>
+            </motion.div>
+        </motion.div>
+    </motion.div>
+)}
         </motion.div>
     );
 }
