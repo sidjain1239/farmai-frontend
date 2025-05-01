@@ -40,7 +40,7 @@ const IrrigationWater = () => {
     const [waterResult, setWaterResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-
+const [land, setland] = useState(0);
     const onSubmit = async (data) => {
         setIsLoading(true);
         setError(null);
@@ -71,8 +71,10 @@ const IrrigationWater = () => {
             
             console.log("Sending water usage data:", waterData);
             const waterResponse = await axios.post('https://farmai-backend.onrender.com/waterusage', waterData);
+setland(Number(data["Area(ha)"]),)
             setWaterResult(waterResponse.data);
 console.log("returned water usage data:", waterResponse.data);
+
         } catch (error) {
             console.error('Error details:', error.response?.data);
             setError(error.response?.data?.detail || 'Error getting predictions. Please check your inputs.');
@@ -338,7 +340,7 @@ console.log("returned water usage data:", waterResponse.data);
             {waterResult.predicted_water_usage.toFixed(2)} liters
         </p>
         <p style={{ marginBottom: '0.5rem', color: '#555' }}>
-            For {waterResult.area_hectares || 'N/A'} hectares of land
+            For {land || 'N/A'} hectares of land
         </p>
         <p style={{
             fontWeight: '600',
@@ -348,8 +350,8 @@ console.log("returned water usage data:", waterResponse.data);
             borderRadius: '4px',
             display: 'inline-block'
         }}>
-            {waterResult.area_hectares && waterResult.area_hectares > 0
-                ? `${(waterResult.predicted_water_usage / waterResult.area_hectares / 1000).toFixed(2)} m³ per hectare`
+            {land && land > 0
+                ? `${(waterResult.predicted_water_usage / land / 1000).toFixed(2)} m³ per hectare`
                 : 'N/A'}
         </p>
     </motion.div>
