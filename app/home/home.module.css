@@ -1,0 +1,121 @@
+.container {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    padding: 2rem;
+  }
+  
+  .backgroundWrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+  
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3));
+    z-index: 0;
+  }
+  
+  .contentWrapper {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    z-index: 1;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .title {
+    font-size: 3.75rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  .subtitle {
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: rgba(236, 253, 245, 0.9);
+    margin-bottom: 0.5rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+  }
+  
+  .description {
+    font-size: 1.25rem;
+    color: rgba(236, 253, 245, 0.8);
+    max-width: 48rem;
+    margin: 0 auto;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 2rem;
+  }
+  
+  .card {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  .cardTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: rgb(4, 120, 87);
+    margin-bottom: 1rem;
+  }
+  
+  .cardContent {
+    color: rgb(75, 85, 99);
+    margin-bottom: 1rem;
+    flex-grow: 1;
+  }
+  
+  .learnMore {
+    color: rgb(16, 185, 129);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    transition: transform 0.2s ease;
+  }
+  
+  .learnMore:hover {
+    transform: translateX(4px);
+  }
+  
+  @media (min-width: 768px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }

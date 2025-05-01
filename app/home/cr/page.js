@@ -1,123 +1,183 @@
 'use client'
 import React from 'react'
 import { useForm } from 'react-hook-form';
-import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import styles from './page.module.css';
-import OpenAI from 'openai';
-
 
 const Cr = () => {
-    
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [result, setResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    ;
+    
     const onSubmit = (data) => {
         setIsLoading(true);
-        console.log(data);
         axios.post('https://farmai-backend.onrender.com/croprecommendation', data)
             .then(response => {
                 console.log(response.data);
                 setResult(response.data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
             })
             .finally(() => {
                 setIsLoading(false);
             });
     }
 
-      
-    
-       
-    
-       
-    
-
     return (
-        <div className={styles.container}>
-            <h1 className={styles.title}>Crop Recommendation</h1>
-            <div className={styles.form}>
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className={styles.container}
+        >
+            <motion.h1 
+                initial={{ y: -20 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.5 }}
+                className={styles.title}
+            >
+                Crop Recommendation
+            </motion.h1>
+            <motion.p
+                initial={{ y: -20 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className={styles.subtitle}
+            >
+                Get AI-powered suggestions for the best crops to plant based on soil conditions and climate
+            </motion.p>
+            
+            <motion.div 
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className={styles.form}
+            >
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label} htmlFor="N">Nitrogen (N) (example: 90)</label>
-                        <input
-                            className={styles.input}
-                            type="number"
-                            id="N"
-                            {...register("N", { required: "Nitrogen value is required", valueAsNumber: true })}
-                        />
-                        {errors.N && <p className={styles.error}>{errors.N.message}</p>}
+                    <div className={styles.sectionTitle}>Soil Nutrients</div>
+                    <div className={styles.grid}>
+                        <div className={styles.formGroup}>
+                            <label className={styles.label} htmlFor="N">Nitrogen (N)</label>
+                            <input
+                                className={styles.input}
+                                type="number"
+                                id="N"
+                                placeholder="e.g., 90"
+                                {...register("N", { 
+                                    required: "Nitrogen value is required", 
+                                    valueAsNumber: true,
+                                    min: { value: 0, message: "Cannot be negative" }
+                                })}
+                            />
+                            {errors.N && <p className={styles.error}>{errors.N.message}</p>}
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label className={styles.label} htmlFor="P">Phosphorus (P)</label>
+                            <input
+                                className={styles.input}
+                                type="number"
+                                id="P"
+                                placeholder="e.g., 42"
+                                {...register("P", { 
+                                    required: "Phosphorus value is required", 
+                                    valueAsNumber: true,
+                                    min: { value: 0, message: "Cannot be negative" }
+                                })}
+                            />
+                            {errors.P && <p className={styles.error}>{errors.P.message}</p>}
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label className={styles.label} htmlFor="K">Potassium (K)</label>
+                            <input
+                                className={styles.input}
+                                type="number"
+                                id="K"
+                                placeholder="e.g., 43"
+                                {...register("K", { 
+                                    required: "Potassium value is required", 
+                                    valueAsNumber: true,
+                                    min: { value: 0, message: "Cannot be negative" }
+                                })}
+                            />
+                            {errors.K && <p className={styles.error}>{errors.K.message}</p>}
+                        </div>
                     </div>
 
-                    <div className={styles.formGroup}>
-                        <label className={styles.label} htmlFor="P">Phosphorus (P) (example: 42)</label>
-                        <input
-                            className={styles.input}
-                            type="number"
-                            id="P"
-                            {...register("P", { required: "Phosphorus value is required", valueAsNumber: true })}
-                        />
-                        {errors.P && <p className={styles.error}>{errors.P.message}</p>}
-                    </div>
+                    <div className={styles.sectionTitle}>Environmental Factors</div>
+                    <div className={styles.grid}>
+                        <div className={styles.formGroup}>
+                            <label className={styles.label} htmlFor="temperature">Temperature (°C)</label>
+                            <input
+                                className={styles.input}
+                                type="number"
+                                step="0.01"
+                                id="temperature"
+                                placeholder="e.g., 20.87"
+                                {...register("temperature", { 
+                                    required: "Temperature is required", 
+                                    valueAsNumber: true 
+                                })}
+                            />
+                            {errors.temperature && <p className={styles.error}>{errors.temperature.message}</p>}
+                        </div>
 
-                    <div className={styles.formGroup}>
-                        <label className={styles.label} htmlFor="K">Potassium (K) (example: 43)</label>
-                        <input
-                            className={styles.input}
-                            type="number"
-                            id="K"
-                            {...register("K", { required: "Potassium value is required", valueAsNumber: true })}
-                        />
-                        {errors.K && <p className={styles.error}>{errors.K.message}</p>}
-                    </div>
+                        <div className={styles.formGroup}>
+                            <label className={styles.label} htmlFor="humidity">Humidity (%)</label>
+                            <input
+                                className={styles.input}
+                                type="number"
+                                step="0.01"
+                                id="humidity"
+                                placeholder="e.g., 82.00"
+                                {...register("humidity", { 
+                                    required: "Humidity is required", 
+                                    valueAsNumber: true,
+                                    min: { value: 0, message: "Cannot be negative" },
+                                    max: { value: 100, message: "Cannot exceed 100%" }
+                                })}
+                            />
+                            {errors.humidity && <p className={styles.error}>{errors.humidity.message}</p>}
+                        </div>
 
-                    <div className={styles.formGroup}>
-                        <label className={styles.label} htmlFor="temperature">Temperature (°C) (example: 20.87)</label>
-                        <input
-                            className={styles.input}
-                            type="number"
-                            step="0.01"
-                            id="temperature"
-                            {...register("temperature", { required: "Temperature is required", valueAsNumber: true })}
-                        />
-                        {errors.temperature && <p className={styles.error}>{errors.temperature.message}</p>}
-                    </div>
+                        <div className={styles.formGroup}>
+                            <label className={styles.label} htmlFor="ph">pH Level</label>
+                            <input
+                                className={styles.input}
+                                type="number"
+                                step="0.01"
+                                id="ph"
+                                placeholder="e.g., 6.50"
+                                {...register("ph", { 
+                                    required: "pH is required", 
+                                    valueAsNumber: true,
+                                    min: { value: 0, message: "Cannot be negative" },
+                                    max: { value: 14, message: "Cannot exceed 14" }
+                                })}
+                            />
+                            {errors.ph && <p className={styles.error}>{errors.ph.message}</p>}
+                        </div>
 
-                    <div className={styles.formGroup}>
-                        <label className={styles.label} htmlFor="humidity">Humidity (%) (example: 82.00)</label>
-                        <input
-                            className={styles.input}
-                            type="number"
-                            step="0.01"
-                            id="humidity"
-                            {...register("humidity", { required: "Humidity is required", valueAsNumber: true })}
-                        />
-                        {errors.humidity && <p className={styles.error}>{errors.humidity.message}</p>}
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <label className={styles.label} htmlFor="ph">pH (example: 6.50)</label>
-                        <input
-                            className={styles.input}
-                            type="number"
-                            step="0.01"
-                            id="ph"
-                            {...register("ph", { required: "pH is required", valueAsNumber: true })}
-                        />
-                        {errors.ph && <p className={styles.error}>{errors.ph.message}</p>}
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <label className={styles.label} htmlFor="rainfall">Rainfall (mm) (example: 202.93)</label>
-                        <input
-                            className={styles.input}
-                            type="number"
-                            step="0.01"
-                            id="rainfall"
-                            {...register("rainfall", { required: "Rainfall is required", valueAsNumber: true })}
-                        />
-                        {errors.rainfall && <p className={styles.error}>{errors.rainfall.message}</p>}
+                        <div className={styles.formGroup}>
+                            <label className={styles.label} htmlFor="rainfall">Rainfall (mm)</label>
+                            <input
+                                className={styles.input}
+                                type="number"
+                                step="0.01"
+                                id="rainfall"
+                                placeholder="e.g., 202.93"
+                                {...register("rainfall", { 
+                                    required: "Rainfall is required", 
+                                    valueAsNumber: true,
+                                    min: { value: 0, message: "Cannot be negative" }
+                                })}
+                            />
+                            {errors.rainfall && <p className={styles.error}>{errors.rainfall.message}</p>}
+                        </div>
                     </div>
 
                     <button
@@ -126,36 +186,43 @@ const Cr = () => {
                         disabled={isLoading}
                     >
                         {isLoading ? (
-                            <div className={styles.loader}>Loading...</div>
+                            <div className={styles.loader}>Analyzing...</div>
                         ) : (
-                            'Get Recommendations'
+                            'Get Crop Recommendations'
                         )}
                     </button>
                 </form>
-            </div>
+            </motion.div>
 
-          
-    
-    {result && (
-        <div className={styles.results}>
-            <h2>Recommended Crops:</h2>
-            {result.predictions.map((pred, index) => (
-                <div key={index} className={styles.prediction}>
-                    <h3>#{index + 1}: {pred.crop.charAt(0).toUpperCase() + pred.crop.slice(1)}</h3>
-                    <p>Confidence: {pred.confidence.toFixed(2)}%</p>
-                </div>
-            ))}
-            <button 
-                onClick={() => setIsChatOpen(true)}
-                className={styles.chatButton}
-            >
-                Ask AI Assistant
-            </button>
-
-          
-        </div>
-    )}
-        </div>
+            {result && (
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className={styles.resultsContainer}
+                >
+                    <h2 className={styles.resultsTitle}>Recommended Crops</h2>
+                    
+                    {result.predictions.map((pred, index) => (
+                        <motion.div 
+                            key={index} 
+                            className={styles.resultCard}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.5, delay: index * 0.1 }}
+                        >
+                            <h3 className={styles.cardTitle}>
+                                #{index + 1}: {pred.crop.charAt(0).toUpperCase() + pred.crop.slice(1)}
+                            </h3>
+                            <div className={styles.cardContent}>
+                                <span className={styles.highlight}>{pred.confidence.toFixed(2)}%</span>
+                                <p>Confidence score</p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </motion.div>
+            )}
+        </motion.div>
     );
 }
 

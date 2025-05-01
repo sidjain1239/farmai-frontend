@@ -3,6 +3,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import styles from './page.module.css';
 
 // Constants from the dataset
@@ -33,22 +34,16 @@ const SOIL_TYPES = [
     { value: "red", label: "Red" }
 ];
 
-const IRRIGATION_TYPES = [
-    { value: "drip", label: "Drip" },
-    { value: "flood", label: "Flood" },
-    { value: "sprinkler", label: "Sprinkler" },
-    { value: "manual", label: "Manual" },
-    { value: "rain-fed", label: "Rain-fed" }
-];
-
 const IrrigationWater = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [irrigationResult, setIrrigationResult] = useState(null);
     const [waterResult, setWaterResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const onSubmit = async (data) => {
         setIsLoading(true);
+        setError(null);
         try {
             // First get irrigation type
             const irrigationData = {
@@ -60,7 +55,7 @@ const IrrigationWater = () => {
             };
             
             console.log("Sending irrigation data:", irrigationData);
-            const irrigationResponse = await axios.post('http://127.0.0.1:8000/cropitype', irrigationData);
+            const irrigationResponse = await axios.post('https://farmai-backend.onrender.com/cropitype', irrigationData);
             setIrrigationResult(irrigationResponse.data);
 
             // Then get water usage with the predicted irrigation type - using the correct field name
@@ -71,7 +66,6 @@ const IrrigationWater = () => {
                 "Area(ha)": Number(data["Area(ha)"]),
                 Crop: data.Crop,
                 Season: data.Season,
-                // Make sure this field name matches exactly what the backend expects
                 Irrigation_Type: irrigationResponse.data.predicted_irrigation_type
             };
             
@@ -80,17 +74,45 @@ const IrrigationWater = () => {
             setWaterResult(waterResponse.data);
         } catch (error) {
             console.error('Error details:', error.response?.data);
-            alert('Error getting predictions: ' + (error.response?.data?.detail || 'Unknown error'));
+            setError(error.response?.data?.detail || 'Error getting predictions. Please check your inputs.');
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <div className={styles.container}>
-            <h1 className={styles.title}>Irrigation & Water Usage Analysis</h1>
-            <div className={styles.form}>
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className={styles.container}
+        >
+            <motion.h1 
+                initial={{ y: -20 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.5 }}
+                className={styles.title}
+            >
+                Water Usage Prediction
+            </motion.h1>
+            
+            <motion.p
+                initial={{ y: -20 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className={styles.subtitle}
+            >
+                Optimize irrigation with precise water requirement predictions for your crops
+            </motion.p>
+            
+            <motion.div 
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className={styles.form}
+            >
                 <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className={styles.sectionTitle}>Crop & Growing Conditions</div>
                     <div className={styles.grid}>
                         <div className={styles.formGroup}>
                             <label className={styles.label}>Crop Type</label>
@@ -139,7 +161,10 @@ const IrrigationWater = () => {
                             </select>
                             {errors.Soil_Type && <p className={styles.error}>{errors.Soil_Type.message}</p>}
                         </div>
+                    </div>
 
+                    <div className={styles.sectionTitle}>Environmental & Field Information</div>
+                    <div className={styles.grid}>
                         <div className={styles.formGroup}>
                             <label className={styles.label}>Rainfall (mm)</label>
                             <input
@@ -165,7 +190,9 @@ const IrrigationWater = () => {
                                 placeholder="e.g., 25"
                                 {...register("Temperature (°C)", { 
                                     required: "Temperature is required",
-                                    valueAsNumber: true
+                                    valueAsNumber: true,
+                                    min: { value: -20, message: "Temperature seems too low" },
+                                    max: { value: 60, message: "Temperature seems too high" }
                                 })}
                             />
                             {errors["Temperature (°C)"] && <p className={styles.error}>{errors["Temperature (°C)"].message}</p>}
@@ -185,47 +212,102 @@ const IrrigationWater = () => {
                                 })}
                             />
                             {errors["Area(ha)"] && <p className={styles.error}>{errors["Area(ha)"].message}</p>}
+                            <p className={styles.note}>Enter the total land area for cultivation</p>
                         </div>
                     </div>
 
-                    <button
+                    <motion.button
                         type="submit"
                         className={styles.button}
                         disabled={isLoading}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.98 }}
                     >
                         {isLoading ? (
-                            <div className={styles.loader}>Analyzing...</div>
+                            <div className={styles.loader}>Analyzing water requirements...</div>
                         ) : (
-                            'Get Analysis'
+                            'Calculate Water Usage'
                         )}
-                    </button>
+                    </motion.button>
                 </form>
-            </div>
+            </motion.div>
 
-            {(irrigationResult || waterResult) && (
-                <div className={styles.results}>
-                    {irrigationResult && (
-                        <div className={styles.resultSection}>
-                            <h2>Recommended Irrigation Type:</h2>
-                            <div className={styles.prediction}>
-                                <h3>{irrigationResult.predicted_irrigation_type.toUpperCase()}</h3>
-                                <p>Confidence: {irrigationResult.confidence.toFixed(2)}%</p>
-                            </div>
-                        </div>
-                    )}
-                    
-                    {waterResult && (
-                        <div className={styles.resultSection}>
-                            <h2>Predicted Water Usage:</h2>
-                            <div className={styles.prediction}>
-                                <h3>{waterResult.predicted_water_usage.toFixed(2)} liters</h3>
-                                <p>For {waterResult.area_hectares} hectares of land</p>
-                            </div>
-                        </div>
-                    )}
-                </div>
+            {error && (
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className={styles.errorMessage}
+                >
+                    <h3>Error</h3>
+                    <p>{error}</p>
+                </motion.div>
             )}
-        </div>
+
+            {(irrigationResult || waterResult) && !error && (
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className={styles.results}
+                >
+                    <motion.div 
+                        className={styles.resultSection}
+                        initial={{ scale: 0.95 }}
+                        animate={{ scale: 1 }}
+                        transition={{ duration: 0.3, delay: 0.1 }}
+                    >
+                        <h2 className={styles.resultsTitle}>Water Resource Analysis</h2>
+                        
+                        {irrigationResult && (
+                            <motion.div 
+                                className={styles.predictionItem}
+                                whileHover={{ scale: 1.02 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <h3>Recommended Irrigation Type</h3>
+                                <p className={styles.highlight}>
+                                    {irrigationResult.predicted_irrigation_type.toUpperCase()}
+                                </p>
+                                <p>Confidence: {irrigationResult.confidence.toFixed(2)}%</p>
+                            </motion.div>
+                        )}
+                        
+                        {waterResult && (
+                            <motion.div 
+                                className={styles.predictionItem}
+                                whileHover={{ scale: 1.02 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <h3>Estimated Water Requirement</h3>
+                                <p className={styles.highlight}>
+                                    {waterResult.predicted_water_usage.toFixed(2)} liters
+                                </p>
+                                <p>For {waterResult.area_hectares} hectares of land</p>
+                                <p className={styles.efficiency}>
+                                    {(waterResult.predicted_water_usage / waterResult.area_hectares / 1000).toFixed(2)} m³ per hectare
+                                </p>
+                            </motion.div>
+                        )}
+                        
+                        <motion.div 
+                            className={styles.recommendations}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5, delay: 0.3 }}
+                        >
+                            <h3>Water Conservation Tips</h3>
+                            <ul>
+                                <li>Water early in the morning or evening to reduce evaporation</li>
+                                <li>Use mulch around plants to retain soil moisture</li>
+                                <li>Consider installing soil moisture sensors for precision irrigation</li>
+                                <li>Maintain irrigation equipment to prevent leaks and inefficiencies</li>
+                                <li>Collect rainwater when possible to supplement irrigation needs</li>
+                            </ul>
+                        </motion.div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </motion.div>
     );
 }
 

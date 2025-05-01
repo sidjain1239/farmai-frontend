@@ -3,6 +3,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import styles from './page.module.css';
 
 // Constants matching the model's encoded values
@@ -46,9 +47,11 @@ export default function PFQForm() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [result, setResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const onSubmit = async (data) => {
         setIsLoading(true);
+        setError(null);
         try {
             const response = await axios.post('https://farmai-backend.onrender.com/pfq', {
                 Crop_Type: data.Crop_Type,
@@ -65,17 +68,45 @@ export default function PFQForm() {
             console.log('Prediction Result:', response.data);
         } catch (error) {
             console.error('Error:', error);
-            alert('Error getting prediction: ' + (error.response?.data?.detail || 'Unknown error'));
+            setError(error.response?.data?.detail || 'Error getting prediction. Please check your inputs.');
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <div className={styles.container}>
-            <h1 className={styles.title}>Pesticide/Fertilizer Quality Prediction</h1>
-            <div className={styles.form}>
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className={styles.container}
+        >
+            <motion.h1 
+                initial={{ y: -20 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.5 }}
+                className={styles.title}
+            >
+                Pesticide & Fertilizer Planning
+            </motion.h1>
+            
+            <motion.p
+                initial={{ y: -20 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className={styles.subtitle}
+            >
+                Calculate optimal quantities of pesticides and fertilizers for maximum efficiency
+            </motion.p>
+            
+            <motion.div 
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className={styles.form}
+            >
                 <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className={styles.sectionTitle}>Crop & Growing Conditions</div>
                     <div className={styles.grid}>
                         <div className={styles.formGroup}>
                             <label className={styles.label}>Crop Type</label>
@@ -124,7 +155,10 @@ export default function PFQForm() {
                             </select>
                             {errors.Soil_Type && <p className={styles.error}>{errors.Soil_Type.message}</p>}
                         </div>
+                    </div>
 
+                    <div className={styles.sectionTitle}>Environmental Factors</div>
+                    <div className={styles.grid}>
                         <div className={styles.formGroup}>
                             <label className={styles.label}>Temperature (°C)</label>
                             <input
@@ -172,7 +206,10 @@ export default function PFQForm() {
                             />
                             {errors.Rainfall && <p className={styles.error}>{errors.Rainfall.message}</p>}
                         </div>
+                    </div>
 
+                    <div className={styles.sectionTitle}>Soil & Yield Information</div>
+                    <div className={styles.grid}>
                         <div className={styles.formGroup}>
                             <label className={styles.label}>pH Level</label>
                             <input
@@ -191,7 +228,7 @@ export default function PFQForm() {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label className={styles.label}>Yield (Tons)</label>
+                            <label className={styles.label}>Expected Yield (Tons)</label>
                             <input
                                 type="number"
                                 step="0.1"
@@ -223,39 +260,86 @@ export default function PFQForm() {
                         </div>
                     </div>
 
-                    <button
+                    <motion.button
                         type="submit"
                         className={styles.button}
                         disabled={isLoading}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.98 }}
                     >
                         {isLoading ? (
-                            <div className={styles.loader}>Processing...</div>
+                            <div className={styles.loader}>Calculating optimal quantities...</div>
                         ) : (
-                            'Get Prediction'
+                            'Calculate Requirements'
                         )}
-                    </button>
+                    </motion.button>
                 </form>
-            </div>
+            </motion.div>
 
-        
+            {error && (
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className={styles.errorMessage}
+                >
+                    <h3>Error</h3>
+                    <p>{error}</p>
+                </motion.div>
+            )}
 
-{result && (
-    <div className={styles.results}>
-        <div className={styles.resultSection}>
-            <h2>Prediction Results:</h2>
-            <div className={styles.prediction}>
-                <div className={styles.predictionItem}>
-                    <h3>Fertilizer Usage</h3>
-                    <p>{Math.max(0, result.predicted_fertilizer_usage_tons).toFixed(4)} tons</p>
-                </div>
-                <div className={styles.predictionItem}>
-                    <h3>Pesticide Usage</h3>
-                    <p>{result.predicted_pesticide_usage_kg.toFixed(4)} kg</p>
-                </div>
-            </div>
-        </div>
-    </div>
-)}
-        </div>
+            {result && (
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className={styles.results}
+                >
+                    <motion.div 
+                        className={styles.resultSection}
+                        initial={{ scale: 0.95 }}
+                        animate={{ scale: 1 }}
+                        transition={{ duration: 0.3, delay: 0.1 }}
+                    >
+                        <h2 className={styles.resultsTitle}>Recommended Quantities</h2>
+                        <div className={styles.prediction}>
+                            <motion.div 
+                                className={styles.predictionItem}
+                                whileHover={{ scale: 1.05 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <h3>Fertilizer Required</h3>
+                                <p className={styles.highlight}>{Math.max(0, result.predicted_fertilizer_usage_tons).toFixed(4)} tons</p>
+                                <p className={styles.note}>Apply in multiple small doses throughout the growing season</p>
+                            </motion.div>
+                            
+                            <motion.div 
+                                className={styles.predictionItem}
+                                whileHover={{ scale: 1.05 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <h3>Pesticide Required</h3>
+                                <p className={styles.highlight}>{result.predicted_pesticide_usage_kg.toFixed(4)} kg</p>
+                                <p className={styles.note}>Use appropriate safety measures when applying pesticides</p>
+                            </motion.div>
+                        </div>
+                        
+                        <motion.div 
+                            className={styles.recommendations}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5, delay: 0.3 }}
+                        >
+                            <h3>Best Practices</h3>
+                            <ul>
+                                <li>Apply fertilizer at cooler times of day to reduce nutrient loss</li>
+                                <li>Consider split applications for more efficient nutrient uptake</li>
+                                <li>Use targeted pesticide application to minimize environmental impact</li>
+                                <li>Adjust based on soil test results and plant health monitoring</li>
+                            </ul>
+                        </motion.div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </motion.div>
     );
 }

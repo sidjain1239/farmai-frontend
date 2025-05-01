@@ -3,29 +3,29 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import styles from './page.module.css';
 
 // Constants from your dataset
 const SOIL_TYPES = [
     { value: "loamy", label: "Loamy" },
-    { value: "sandy", label: "Sandy" },
-    { value: "clayey", label: "Clayey" },
-    { value: "red", label: "Red" }
 ];
 
 const SEASONS = [
     { value: "kharif", label: "Kharif" },
     { value: "rabi", label: "Rabi" },
-    { value: "zaid", label: "Zaid" }
+    // { value: "zaid", label: "Zaid" }
 ];
 
 export default function AgriAnalyticsForm() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [results, setResults] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const onSubmit = async (data) => {
         setIsLoading(true);
+        setError(null);
         try {
             const response = await axios.post('https://farmai-backend.onrender.com/agri-analytics', {
                 N: Number(data.N),
@@ -44,18 +44,43 @@ export default function AgriAnalyticsForm() {
             setResults(response.data);
         } catch (error) {
             console.error('Error:', error);
-            alert('Error getting analytics: ' + (error.response?.data?.detail || 'Unknown error'));
+            setError(error.response?.data?.detail || 'Error getting analytics. Please check your inputs.');
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <div className={styles.container}>
-            <h1 className={styles.title}>Agricultural Analytics</h1>
-            <p className={styles.subtitle}>Get comprehensive farming recommendations with a single analysis</p>
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className={styles.container}
+        >
+            <motion.h1 
+                initial={{ y: -20 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.5 }}
+                className={styles.title}
+            >
+                Agricultural Analytics
+            </motion.h1>
             
-            <div className={styles.form}>
+            <motion.p
+                initial={{ y: -20 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className={styles.subtitle}
+            >
+                Get comprehensive farming recommendations with a single analysis
+            </motion.p>
+            
+            <motion.div 
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className={styles.form}
+            >
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className={styles.sectionTitle}>Soil Nutrients</div>
                     <div className={styles.grid}>
@@ -187,6 +212,7 @@ export default function AgriAnalyticsForm() {
                                     </option>
                                 ))}
                             </select>
+                            <p className={styles.note}>Currently, the model only accepts loamy soil.</p>
                             {errors.Soil_Type && <p className={styles.error}>{errors.Soil_Type.message}</p>}
                         </div>
 
@@ -254,118 +280,195 @@ export default function AgriAnalyticsForm() {
                         </div>
                     </div>
 
-                    <button
+                    <motion.button
                         type="submit"
                         className={styles.button}
                         disabled={isLoading}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.98 }}
                     >
                         {isLoading ? (
-                            <div className={styles.loader}>Analyzing...</div>
+                            <div className={styles.loader}>Analyzing data...</div>
                         ) : (
                             'Get Complete Analysis'
                         )}
-                    </button>
+                    </motion.button>
                 </form>
-            </div>
+            </motion.div>
 
-            {results && (
-    <div className={styles.resultsContainer}>
-        <h2 className={styles.resultsTitle}>Agricultural Analytics Results</h2>
-        
-        {/* Crop Recommendation */}
-        {results.crop_recommendation && (
-            <div className={styles.resultCard}>
-                <h3 className={styles.cardTitle}>Crop Recommendation</h3>
-                <div className={styles.cardContent}>
-                    <p className={styles.highlight}>{results.crop_recommendation.crop || 'Data not available'}</p>
-                    <p>Confidence: {results.crop_recommendation.confidence?.toFixed(2) || 'N/A'}%</p>
-                </div>
-            </div>
-        )}
-        
-        {/* Irrigation Type */}
-        {results.irrigation_type && (
-            <div className={styles.resultCard}>
-                <h3 className={styles.cardTitle}>Irrigation System</h3>
-                <div className={styles.cardContent}>
-                    <p className={styles.highlight}>{results.irrigation_type.predicted_irrigation_type || 'Data not available'}</p>
-                    <p>Confidence: {results.irrigation_type.confidence?.toFixed(2) || 'N/A'}%</p>
-                </div>
-            </div>
-        )}
-        
-        {/* Water Usage */}
-        <div className={styles.resultCard}>
-            <h3 className={styles.cardTitle}>Water Usage</h3>
-            <div className={styles.cardContent}>
-                <p className={styles.highlight}>
-                    {results.water_usage?.predicted_water_usage 
-                        ? `${results.water_usage.predicted_water_usage.toFixed(2)} liters`
-                        : 'Data not available'}
-                </p>
-                <p>Estimated water requirement for your farm</p>
-            </div>
-        </div>
-        
-        {/* Fertilizer Recommendation */}
-        <div className={styles.resultCard}>
-            <h3 className={styles.cardTitle}>Fertilizer Recommendation</h3>
-            <div className={styles.cardContent}>
-                <p className={styles.highlight}>
-                    {results.fertilizer_recommendation?.predicted_fertilizer || 'Data not available'}
-                </p>
-                <p>{results.fertilizer_recommendation?.remark || ''}</p>
-            </div>
-        </div>
-        
-        {/* Crop Yield */}
-        {results.crop_yield && (
-            <div className={styles.resultCard}>
-                <h3 className={styles.cardTitle}>Expected Yield</h3>
-                <div className={styles.cardContent}>
-                    <p className={styles.highlight}>
-                        {results.crop_yield.predicted_crop_yield
-                            ? `${results.crop_yield.predicted_crop_yield.toFixed(2)} tons`
-                            : 'Data not available'}
-                    </p>
-                    <p>Estimated total yield for your farm</p>
-                </div>
-            </div>
-        )}
-        
-        {/* Fertilizer & Pesticide Quantity */}
-        {results.fertilizer_pesticide_quantity && !results.fertilizer_pesticide_quantity.error && (
-            <div className={styles.resultCard}>
-                <h3 className={styles.cardTitle}>Required Quantities</h3>
-                <div className={styles.cardContent}>
-                    <p>
-                        <span className={styles.label}>Fertilizer:</span> 
-                        <span className={styles.highlight}>
-                            {results.fertilizer_pesticide_quantity.predicted_fertilizer_usage_tons?.toFixed(2) || 'N/A'} tons
-                        </span>
-                    </p>
-                    <p>
-                        <span className={styles.label}>Pesticide:</span> 
-                        <span className={styles.highlight}>
-                            {results.fertilizer_pesticide_quantity.predicted_pesticide_usage_kg?.toFixed(2) || 'N/A'} kg
-                        </span>
-                    </p>
-                    {results.fertilizer_pesticide_quantity.note && (
-                        <p className={styles.note}>{results.fertilizer_pesticide_quantity.note}</p>
+            {error && (
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className={styles.errorMessage}
+                >
+                    <h3>Error</h3>
+                    <p>{error}</p>
+                </motion.div>
+            )}
+
+            {results && !error && (
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className={styles.resultsContainer}
+                >
+                    <h2 className={styles.resultsTitle}>Agricultural Analytics Results</h2>
+                    
+                    <div className={styles.resultsGrid}>
+                        {/* Crop Recommendation */}
+                        {results.crop_recommendation && (
+                            <motion.div 
+                                className={styles.resultCard}
+                                initial={{ scale: 0.95, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ duration: 0.3, delay: 0.1 }}
+                                whileHover={{ scale: 1.03 }}
+                            >
+                                <h3 className={styles.cardTitle}>Crop Recommendation</h3>
+                                <div className={styles.cardContent}>
+                                    <p className={styles.highlight}>{results.crop_recommendation.crop || 'Data not available'}</p>
+                                    <p>Confidence: {results.crop_recommendation.confidence?.toFixed(2) || 'N/A'}%</p>
+                                </div>
+                            </motion.div>
+                        )}
+                        
+                        {/* Irrigation Type */}
+                        {results.irrigation_type && (
+                            <motion.div 
+                                className={styles.resultCard}
+                                initial={{ scale: 0.95, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ duration: 0.3, delay: 0.2 }}
+                                whileHover={{ scale: 1.03 }}
+                            >
+                                <h3 className={styles.cardTitle}>Irrigation System</h3>
+                                <div className={styles.cardContent}>
+                                    <p className={styles.highlight}>{results.irrigation_type.predicted_irrigation_type || 'Data not available'}</p>
+                                    <p>Confidence: {results.irrigation_type.confidence?.toFixed(2) || 'N/A'}%</p>
+                                </div>
+                            </motion.div>
+                        )}
+                        
+                        {/* Water Usage */}
+                        <motion.div 
+                            className={styles.resultCard}
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ duration: 0.3, delay: 0.3 }}
+                            whileHover={{ scale: 1.03 }}
+                        >
+                            <h3 className={styles.cardTitle}>Water Usage</h3>
+                            <div className={styles.cardContent}>
+                                <p className={styles.highlight}>
+                                    {results.water_usage?.predicted_water_usage 
+                                        ? `${results.water_usage.predicted_water_usage.toFixed(2)} liters`
+                                        : 'Data not available'}
+                                </p>
+                                <p>Estimated water requirement for your farm</p>
+                            </div>
+                        </motion.div>
+                        
+                        {/* Fertilizer Recommendation */}
+                        <motion.div 
+                            className={styles.resultCard}
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ duration: 0.3, delay: 0.4 }}
+                            whileHover={{ scale: 1.03 }}
+                        >
+                            <h3 className={styles.cardTitle}>Fertilizer Recommendation</h3>
+                            <div className={styles.cardContent}>
+                                <p className={styles.highlight}>
+                                    {results.fertilizer_recommendation?.predicted_fertilizer || 'Data not available'}
+                                </p>
+                                <p>{results.fertilizer_recommendation?.remark || ''}</p>
+                            </div>
+                        </motion.div>
+                        
+                        {/* Crop Yield */}
+                        {results.crop_yield && (
+                            <motion.div 
+                                className={styles.resultCard}
+                                initial={{ scale: 0.95, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ duration: 0.3, delay: 0.5 }}
+                                whileHover={{ scale: 1.03 }}
+                            >
+                                <h3 className={styles.cardTitle}>Expected Yield</h3>
+                                <div className={styles.cardContent}>
+                                    <p className={styles.highlight}>
+                                        {results.crop_yield.predicted_crop_yield
+                                            ? `${results.crop_yield.predicted_crop_yield.toFixed(2)} tons`
+                                            : 'Data not available'}
+                                    </p>
+                                    <p>Estimated total yield for your farm</p>
+                                </div>
+                            </motion.div>
+                        )}
+                        
+                        {/* Fertilizer & Pesticide Quantity */}
+                        {results.fertilizer_pesticide_quantity && !results.fertilizer_pesticide_quantity.error && (
+                            <motion.div 
+                                className={styles.resultCard}
+                                initial={{ scale: 0.95, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ duration: 0.3, delay: 0.6 }}
+                                whileHover={{ scale: 1.03 }}
+                            >
+                                <h3 className={styles.cardTitle}>Required Quantities</h3>
+                                <div className={styles.cardContent}>
+                                    <p>
+                                        <span className={styles.label}>Fertilizer:</span> 
+                                        <span className={styles.highlight}>
+                                            {results.fertilizer_pesticide_quantity.predicted_fertilizer_usage_tons?.toFixed(2) || 'N/A'} tons
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span className={styles.label}>Pesticide:</span> 
+                                        <span className={styles.highlight}>
+                                            {results.fertilizer_pesticide_quantity.predicted_pesticide_usage_kg?.toFixed(2) || 'N/A'} kg
+                                        </span>
+                                    </p>
+                                    {results.fertilizer_pesticide_quantity.note && (
+                                        <p className={styles.note}>{results.fertilizer_pesticide_quantity.note}</p>
+                                    )}
+                                </div>
+                            </motion.div>
+                        )}
+                    </div>
+                    
+                    {/* Farming Tips */}
+                    <motion.div 
+                        className={styles.recommendations}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5, delay: 0.8 }}
+                    >
+                        <h3>Farming Best Practices</h3>
+                        <ul>
+                            <li>Follow recommended crop rotation practices to maintain soil health</li>
+                            <li>Use soil tests to monitor and adjust nutrient levels periodically</li>
+                            <li>Implement integrated pest management to minimize pesticide use</li>
+                            <li>Consider water conservation techniques like rainwater harvesting</li>
+                            <li>Time fertilizer applications according to crop growth stages for maximum efficiency</li>
+                        </ul>
+                    </motion.div>
+                    
+                    {/* Error Display */}
+                    {results.error && (
+                        <motion.div 
+                            className={styles.errorCard}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                        >
+                            <h3>Error</h3>
+                            <p>{results.error}</p>
+                        </motion.div>
                     )}
-                </div>
-            </div>
-        )}
-        
-        {/* Error Display */}
-        {results.error && (
-            <div className={styles.errorCard}>
-                <h3>Error</h3>
-                <p>{results.error}</p>
-            </div>
-        )}
-    </div>
-)}
-        </div>
+                </motion.div>
+            )}
+        </motion.div>
     );
 }
