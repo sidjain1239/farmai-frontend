@@ -340,10 +340,11 @@ export default function FertilizerForm() {
                                 {result.remark}
                             </p>
                         )}
-                        <p className={styles.note || ''}>
-                            Apply the recommended fertilizer according to the manufacturer's instructions 
-                            and adjust based on soil testing results.
-                        </p>
+
+<p className={styles.note || ''}>
+    Apply the recommended fertilizer according to the manufacturer&apos;s instructions 
+    and adjust based on soil testing results.
+</p>
                     </div>
                 </motion.div>
             )}
