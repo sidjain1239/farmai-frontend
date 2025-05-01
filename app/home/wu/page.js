@@ -72,6 +72,7 @@ const IrrigationWater = () => {
             console.log("Sending water usage data:", waterData);
             const waterResponse = await axios.post('https://farmai-backend.onrender.com/waterusage', waterData);
             setWaterResult(waterResponse.data);
+console.log("returned water usage data:", waterResponse.data);
         } catch (error) {
             console.error('Error details:', error.response?.data);
             setError(error.response?.data?.detail || 'Error getting predictions. Please check your inputs.');
