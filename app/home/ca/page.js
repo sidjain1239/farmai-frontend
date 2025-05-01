@@ -446,20 +446,45 @@ export default function AgriAnalyticsForm() {
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5, delay: 0.8 }}
                     >
-                     
+                        <h3 style={{ 
+                    color: '#2c3e50', 
+                    marginBottom: '1rem',
+                    borderBottom: '2px solid #f0f0f0',
+                    paddingBottom: '0.5rem'
+                }}>Farming Best Practices</h3>
+                        <ul style={{ 
+                    paddingLeft: '1.25rem',
+                    color: '#555',
+                    lineHeight: '1.6'
+                }} >
+                            <li>Follow recommended crop rotation practices to maintain soil health</li>
+                            <li>Use soil tests to monitor and adjust nutrient levels periodically</li>
+                            <li>Implement integrated pest management to minimize pesticide use</li>
+                            <li>Consider water conservation techniques like rainwater harvesting</li>
+                            <li>Time fertilizer applications according to crop growth stages for maximum efficiency</li>
+                        </ul>
                     </motion.div>
                     
                     {/* Error Display */}
-                    {results.error && (
-                        <motion.div 
-                            className={styles.errorCard}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                        >
-                            <h3>Error</h3>
-                            <p>{results.error}</p>
-                        </motion.div>
-                    )}
+                    {error && (
+    <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        style={{
+            backgroundColor: '#ffe6e6', // Light red background
+            border: '1px solid #ff4d4d', // Red border
+            borderRadius: '8px', // Rounded corners
+            padding: '1rem', // Padding inside the card
+            marginTop: '1.5rem', // Space above the card
+            color: '#b30000', // Dark red text color
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Subtle shadow
+            textAlign: 'center' // Center-align text
+        }}
+    >
+        <h3 style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>Error</h3>
+        <p style={{ fontSize: '1rem' }}>{error}</p>
+    </motion.div>
+)}
                 </motion.div>
             )}
         </motion.div>
