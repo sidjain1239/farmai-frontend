@@ -14,7 +14,7 @@ const CROP_TYPES = [
     { value: "sugarcane", label: "Sugarcane" },
     { value: "cotton", label: "Cotton" },
     { value: "groundnut", label: "Groundnut" },
-    { value: "potato", label: "Potato" },
+    // { value: "potato", label: "Potato" },
     { value: "tomato", label: "Tomato" },
     { value: "onion", label: "Onion" },
     { value: "mango", label: "Mango" }
@@ -314,43 +314,45 @@ const IrrigationWater = () => {
                 )}
                 
                 {waterResult && (
-                    <motion.div 
-                        className={styles.predictionItem}
-                        whileHover={{ scale: 1.03 }}
-                        transition={{ duration: 0.2 }}
-                        style={{
-                            flex: '1 0 300px',
-                            padding: '1.5rem',
-                            backgroundColor: '#ffffff',
-                            borderRadius: '8px',
-                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                            textAlign: 'center'
-                        }}
-                    >
-                        <h3 style={{ color: '#2980b9', marginBottom: '1rem' }}>Estimated Water Requirement</h3>
-                        <p className={styles.highlight} style={{
-                            fontSize: '2rem',
-                            fontWeight: '700',
-                            color: '#2ecc71',
-                            margin: '0.5rem 0'
-                        }}>
-                            {waterResult.predicted_water_usage.toFixed(2)} liters
-                        </p>
-                        <p style={{ marginBottom: '0.5rem', color: '#555' }}>
-                            For {waterResult.area_hectares} hectares of land
-                        </p>
-                        <p style={{
-                            fontWeight: '600',
-                            color: '#16a085',
-                            backgroundColor: '#e8f8f5',
-                            padding: '0.5rem',
-                            borderRadius: '4px',
-                            display: 'inline-block'
-                        }}>
-                            {(waterResult.predicted_water_usage / waterResult.area_hectares / 1000).toFixed(2)} m³ per hectare
-                        </p>
-                    </motion.div>
-                )}
+    <motion.div 
+        className={styles.predictionItem}
+        whileHover={{ scale: 1.03 }}
+        transition={{ duration: 0.2 }}
+        style={{
+            flex: '1 0 300px',
+            padding: '1.5rem',
+            backgroundColor: '#ffffff',
+            borderRadius: '8px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+            textAlign: 'center'
+        }}
+    >
+        <h3 style={{ color: '#2980b9', marginBottom: '1rem' }}>Estimated Water Requirement</h3>
+        <p className={styles.highlight} style={{
+            fontSize: '2rem',
+            fontWeight: '700',
+            color: '#2ecc71',
+            margin: '0.5rem 0'
+        }}>
+            {waterResult.predicted_water_usage.toFixed(2)} liters
+        </p>
+        <p style={{ marginBottom: '0.5rem', color: '#555' }}>
+            For {waterResult.area_hectares || 'N/A'} hectares of land
+        </p>
+        <p style={{
+            fontWeight: '600',
+            color: '#16a085',
+            backgroundColor: '#e8f8f5',
+            padding: '0.5rem',
+            borderRadius: '4px',
+            display: 'inline-block'
+        }}>
+            {waterResult.area_hectares && waterResult.area_hectares > 0
+                ? `${(waterResult.predicted_water_usage / waterResult.area_hectares / 1000).toFixed(2)} m³ per hectare`
+                : 'N/A'}
+        </p>
+    </motion.div>
+)}
             </div>
             
             <motion.div 

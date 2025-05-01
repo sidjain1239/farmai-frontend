@@ -446,8 +446,17 @@ export default function AgriAnalyticsForm() {
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5, delay: 0.8 }}
                     >
-                        <h3>Farming Best Practices</h3>
-                        <ul>
+                        <h3 style={{ 
+                    color: '#2c3e50', 
+                    marginBottom: '1rem',
+                    borderBottom: '2px solid #f0f0f0',
+                    paddingBottom: '0.5rem'
+                }}>Farming Best Practices</h3>
+                        <ul style={{ 
+                    paddingLeft: '1.25rem',
+                    color: '#555',
+                    lineHeight: '1.6'
+                }} >
                             <li>Follow recommended crop rotation practices to maintain soil health</li>
                             <li>Use soil tests to monitor and adjust nutrient levels periodically</li>
                             <li>Implement integrated pest management to minimize pesticide use</li>
